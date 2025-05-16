@@ -7,12 +7,14 @@
 #include "Adafruit_GFX/Draw_Write.hpp"
 #include "Style.hpp"
 
+// Отрисовка одного сегмента змейки
 void printSnakeSquare(SnakeNode &sn) {
 	tft_fillRoundRect(sn.Coord.X * SIZE_SIDE_SQUARE,
 			sn.Coord.Y * SIZE_SIDE_SQUARE, SIZE_SIDE_SQUARE, SIZE_SIDE_SQUARE,
 			RADIUS_ROUNDING, sn.color);
 }
 
+// Отрисовка интерфейса паузы (счет и подсказки)
 void printPauseInterface(ClassicSnake& SnakeObj)
 {
 	tft_setTextColor(TEXT_COLOR);
@@ -28,6 +30,7 @@ void printPauseInterface(ClassicSnake& SnakeObj)
 	tft_print("HOLD 2 REST");
 }
 
+// Основная задача игры "Змейка"
 void SnakeTask(Core::FA::InputFA* inputFA)
 {
 	ClassicSnake SnakeObj(Coordinate { 0, 0 }, Coordinate { 20, 15 },

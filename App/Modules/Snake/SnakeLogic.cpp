@@ -3,6 +3,7 @@
 #include "stm32f1xx_api.h"
 #include "App/InputFA.hpp"
 
+// Получить состояние ввода для паузы (обработка удержания кнопок)
 Core::FA::InputState ClassicSnake::getPauseInputState()
 {
 	Core::FA::InputState state;
@@ -19,6 +20,7 @@ Core::FA::InputState ClassicSnake::getPauseInputState()
 	return state;
 }
 
+// Получить состояние ввода для игры (обработка нажатий для смены направления)
 Core::FA::InputState ClassicSnake::getGameInputState()
 {
 	Core::FA::InputState state;
@@ -71,6 +73,7 @@ Core::FA::InputState ClassicSnake::getGameInputState()
 	return state;
 }
 
+// Продвинуть координату головы змейки в текущем направлении
 Coordinate& ClassicSnake::Promote(Coordinate& coord)
 {
  	switch (currentDir)
@@ -83,6 +86,7 @@ Coordinate& ClassicSnake::Promote(Coordinate& coord)
 	return coord;
 }
 
+// Проверка выхода за границы поля и перенос на противоположную сторону
 Coordinate& ClassicSnake::CheckBoundaries(Coordinate& coord)
 {
 	if (coord.X == (upLeftField.X - 1)) coord.X = lowRightField.X;		//left
@@ -92,12 +96,14 @@ Coordinate& ClassicSnake::CheckBoundaries(Coordinate& coord)
 	return coord;
 }
 
+// Конструктор классической змейки
 ClassicSnake::ClassicSnake(Coordinate UpLeft_, Coordinate DownRight_, color_t ColorHead_, color_t ColorBody_,
 		color_t ColorFruit_, color_t ColorBackGround_)
 : upLeftField(UpLeft_), lowRightField(DownRight_), colorHead(ColorHead_), colorBody(ColorBody_),
   colorFruit(ColorFruit_), colorBackGround(ColorBackGround_), currentDir(defDirections)
 {
-	Coordinate tmpCoord = { ((DownRight_.X - UpLeft_.X) / 2) + UpLeft_.X,((DownRight_.Y - UpLeft_.Y) / 2) + UpLeft_.Y };//center field
+	// Центр поля
+	Coordinate tmpCoord = { ((DownRight_.X - UpLeft_.X) / 2) + UpLeft_.X,((DownRight_.Y - UpLeft_.Y) / 2) + UpLeft_.Y };
 //___
 	mySnake.push_front({ tmpCoord, ColorHead_ });
 	Promote(tmpCoord);
@@ -108,6 +114,7 @@ ClassicSnake::ClassicSnake(Coordinate UpLeft_, Coordinate DownRight_, color_t Co
 	GenerateNewFruit().color = ColorFruit_;
 }
 
+// Движение змейки вперед
 ClassicSnake& ClassicSnake::Move()
 {
 	auto tail = (*++mySnake.begin()).Coord;
@@ -122,24 +129,28 @@ ClassicSnake& ClassicSnake::Move()
 	return *this;
 }
 
+// Добавить новый сегмент к змейке
 ClassicSnake& ClassicSnake::AddNodeToEnd()
 {
 	mySnake.emplace(++mySnake.begin(), Coordinate{ -1, -1 }, colorBody);
 	return *this;
 }
 
+// Установить новое направление движения
 ClassicSnake& ClassicSnake::NewDirection(directions newDir)
 {
 	currentDir = newDir;
 	return *this;
 }
 
+// Проверка столкновения головы змейки с телом
 bool ClassicSnake::CheckSnakeCollision(const SnakeNode& myNode) const
 {
 	return !std::none_of(++mySnake.begin(), --mySnake.end(), [&myNode](auto& rhs)
 			{return (rhs.Coord.X == myNode.Coord.X) && (rhs.Coord.Y == myNode.Coord.Y); });
 }
 
+// Генерация новой позиции для фрукта
 SnakeNode& ClassicSnake::GenerateNewFruit()
 {
 	static std::size_t counter = 0;
@@ -147,6 +158,8 @@ SnakeNode& ClassicSnake::GenerateNewFruit()
 	fruitCoordinate.Coord.Y = ((getTick() +  ++counter) % lowRightField.Y) + upLeftField.Y;
 	return fruitCoordinate;
 }
+
+// Проверка, съела ли змейка фрукт
 bool ClassicSnake::CheckFruit()
 {
 	const SnakeNode& head = *mySnake.rbegin();
@@ -154,6 +167,8 @@ bool ClassicSnake::CheckFruit()
 		return true;
 	else return false;
 }
+
+// Получить размер змейки (количество сегментов)
 size_t ClassicSnake::getSizeSnake()
 {
 	return mySnake.size() - 1;

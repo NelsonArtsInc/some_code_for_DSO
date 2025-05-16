@@ -10,6 +10,7 @@
 #include "Coordinate.hpp"
 #include "Style.hpp"
 
+// Константы игрового поля и параметров тетриса
 constexpr auto ROW_OF_FIELD					= 20;
 constexpr auto HIDDEN_ROW_OF_FIELD			= 4;
 constexpr auto COL_OF_FIELD					= 10;
@@ -20,6 +21,7 @@ constexpr uint32_t TETRIS_LEVEL_STEP_PTS 	= 1000;
 constexpr uint32_t SQUARE_RADIUS 			= 3;
 constexpr uint32_t SIDE_SQUARE 				= 15;
 
+// Цвета фигур и фона
 enum Colors
 {
 	BACKGROUND = BACKGROUND_COLOR,
@@ -32,7 +34,9 @@ enum Colors
 	FIG7COLOR = ILI9341_CYAN
 };
 
+// Направления движения фигуры
 enum class Directions{LEFT, RIGHT};
+// Состояния паузы в тетрисе
 enum class TetrisPauseStates{NONE, RESET, MENU};
 
 struct PartTetrisBlock

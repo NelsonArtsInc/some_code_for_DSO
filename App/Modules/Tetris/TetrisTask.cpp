@@ -4,6 +4,7 @@
 #include "Adafruit_GFX/Adafruit_GFX.hpp"
 #include "Process/MainThread.hpp"
 
+// Отрисовка текущей фигуры тетриса
 void PrintTetrisFigure(const TetrisFigure& figure)
 {
 	int side = figure.side;
@@ -18,6 +19,7 @@ void PrintTetrisFigure(const TetrisFigure& figure)
 	forceHandleWeakControls();
 }
 
+// Стереть предыдущую позицию фигуры
 void ErasePrevFigure(const TetrisFigure& figure)
 {
 	int side = figure.side;
@@ -32,6 +34,7 @@ void ErasePrevFigure(const TetrisFigure& figure)
 	forceHandleWeakControls();
 }
 
+// Стереть фигуру с поля
 void EraseFigure(const TetrisFigure& figure)
 {
 	int side = figure.side;
@@ -46,10 +49,9 @@ void EraseFigure(const TetrisFigure& figure)
 	forceHandleWeakControls();
 }
 
-
+// Отрисовка всего игрового поля
 void PrintTetrisField(block_t& myBlock)
 {
-
 	for (int row = HIDDEN_ROW_OF_FIELD; row < ROW_OF_FIELD; ++row)
 		for (int col = 0; col < COL_OF_FIELD; ++col)
 		{
@@ -57,8 +59,9 @@ void PrintTetrisField(block_t& myBlock)
 					SIDE_SQUARE, SIDE_SQUARE, SQUARE_RADIUS, myBlock[row * COL_OF_FIELD + col].color);
 		}
 	forceHandleWeakControls();
-
 }
+
+// Отрисовка следующей фигуры
 void PrintNextFigure(const TetrisFigure& figure)
 {
 	tft_fillRoundRect(165, 30, 60, 60, SQUARE_RADIUS, ILI9341_WHITE);
@@ -71,6 +74,8 @@ void PrintNextFigure(const TetrisFigure& figure)
 
 	forceHandleWeakControls();
 }
+
+// Отрисовка очков и количества строк
 void PrintRowNPoint(const size_t& points, const size_t& row)
 {
 	tft_setCursor(245, 100);
@@ -79,6 +84,7 @@ void PrintRowNPoint(const size_t& points, const size_t& row)
 	tft_print((uint16_t)row);
 }
 
+// Отрисовка интерфейса паузы/конца игры
 void printPauseInterface()
 {
 	tft_fillRoundRect(165, 30, 60, 60, SQUARE_RADIUS, FOREGROUND_COLOR);
@@ -94,6 +100,7 @@ void printPauseInterface()
 	tft_print("HOLD 2 REST");
 }
 
+// Основная задача игры "Тетрис"
 void TetrisTask(Core::FA::InputFA* inputFA)
 {
 	PrintTetrisInterface();
@@ -167,6 +174,7 @@ void TetrisTask(Core::FA::InputFA* inputFA)
 	}
 }
 
+// Отрисовка интерфейса тетриса (панели, надписи, подсказки)
 void PrintTetrisInterface()
 {
 	tft_fillRoundRect(0, 0, 150, 240, 0, BACKGROUND);

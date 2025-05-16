@@ -10,34 +10,40 @@
 
 #include <stdint.h>
 
+// Перечисление возможных состояний кнопки
 enum ButtonState
 {
-	PRESSED,
-	HOLDED,
-	RELEASED,
-	CLICKED,
-	DOUBLE_CLICKED,
-	TRIPPLE_CLICKED,
-	MULTIPLE_CLICKED, // add series of clicks in callback if needed
+    PRESSED,           // Кнопка нажата
+    HOLDED,            // Кнопка удерживается
+    RELEASED,          // Кнопка отпущена
+    CLICKED,           // Одиночный клик
+    DOUBLE_CLICKED,    // Двойной клик
+    TRIPPLE_CLICKED,   // Тройной клик
+    MULTIPLE_CLICKED,  // Множественный клик (4 и более)
 
-	COUNT_OF_BUTTON_STATES
+    COUNT_OF_BUTTON_STATES // Количество состояний (служебное)
 };
 
+// Перечисление направлений вращения энкодера
 enum WheelDirection
 {
-	WHEEL_LEFT = 0,
-	WHEEL_RIGHT
+    WHEEL_LEFT = 0,    // Вращение влево
+    WHEEL_RIGHT        // Вращение вправо
 };
 
+// Инициализация всех кнопок и энкодера
 void initializeControls();
 
+// Обработка таймерного прерывания для управления состояниями кнопок
 void handleControlsTimerInterrupt();
+
+// Обработка внешнего прерывания по изменению состояния GPIO (кнопки/энкодер)
 void handleGPIOInterrupt(uint16_t GPIO_Pin);
 
-// called after reusing buttons pins
+// Принудительная обработка всех кнопок (например, после повторного использования пинов)
 void forceHandleWeakControls();
 
-// Weak callbacks
+// Слабые (weak) колбэки для обработки событий кнопок и энкодера
 void onLeftButton(int newState);
 void onMidLeftButton(int newState);
 void onMidButton(int newState);

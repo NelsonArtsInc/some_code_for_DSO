@@ -5,9 +5,12 @@
 
 namespace {
 
+// Индекс текущей ноты
 int _currerntNote = 0;
+// Слабая ссылка на текущую проигрываемую мелодию
 std::weak_ptr<Core::Sound::Melody> _currentMelodyWeak;
 
+// Запуск следующей ноты мелодии
 void startNextNote()
 {
 	if(auto melody = _currentMelodyWeak.lock()) {
@@ -21,6 +24,7 @@ void startNextNote()
 
 }
 
+// Обработчик окончания проигрывания звука (вызывается из HAL)
 void onBuzzerStop()
 {
 	startNextNote();
@@ -28,6 +32,7 @@ void onBuzzerStop()
 
 namespace Core::Sound {
 
+// Запустить проигрывание мелодии
 void SoundManager::play(const std::weak_ptr<Melody>& melody)
 {
 	_currentMelodyWeak = melody;
@@ -36,16 +41,19 @@ void SoundManager::play(const std::weak_ptr<Melody>& melody)
 	startNextNote();
 }
 
+// Проверить, занят ли звуковой менеджер
 bool SoundManager::isBusy() const
 {
 	return !_currentMelodyWeak.expired();
 }
 
+// Остановить проигрывание
 void SoundManager::stop()
 {
 	_currentMelodyWeak.reset();
 }
 
+// Получить текущую проигрываемую мелодию
 std::weak_ptr<Melody> SoundManager::currentMelody() const
 {
 	return _currentMelodyWeak;

@@ -2,6 +2,7 @@
 
 #include "stm32f1xx_api.h"
 
+// Получить состояние ввода для игры (Tetris)
 Core::FA::InputState TetrisManager::getGameInputState()
 {
 	Core::FA::InputState state;
@@ -63,6 +64,7 @@ Core::FA::InputState TetrisManager::getGameInputState()
 	return state;
 }
 
+// Получить состояние ввода для паузы (Tetris)
 Core::FA::InputState TetrisManager::getPauseInputState()
 {
 	Core::FA::InputState state;
@@ -79,6 +81,7 @@ Core::FA::InputState TetrisManager::getPauseInputState()
 	return state;
 }
 
+// Конструктор менеджера тетриса
 TetrisManager::TetrisManager()
 {
 	field.resize(ROW_OF_FIELD * COL_OF_FIELD);
@@ -87,6 +90,7 @@ TetrisManager::TetrisManager()
 	GenerateNewFigure();
 }
 
+// Удаление заполненных строк
 size_t TetrisManager::EraseFilledRow()
 {
 	auto itBeg = field.begin();
@@ -109,12 +113,15 @@ size_t TetrisManager::EraseFilledRow()
 	return ErasedRows;
 }
 
+// Генерация новой фигуры
 void TetrisManager::GenerateNewFigure()
 {
 	static std::size_t counter = 1;
 	currentFigure = nextFigure;
 	nextFigure = myFigure.begin() + ((HAL_GetTick() + ++counter) % QUANTITY_FIGURE);
 }
+
+// Конструктор фигуры тетриса
 TetrisFigure::TetrisFigure(block_t&& figure_, Coordinate coordFigure_, size_t sideFigure_, uint32_t colorFigure, TetrisManager& manager_)
 	: figure(std::move(figure_)), initFigure(figure), initCoord(coordFigure_),  prevCoord(coordFigure_),
 	  coord(coordFigure_), manager(manager_), side(sideFigure_)
@@ -127,6 +134,7 @@ TetrisFigure::TetrisFigure(block_t&& figure_, Coordinate coordFigure_, size_t si
 		}
 }
 
+// Поворот фигуры
 void TetrisFigure::Rotate()
 {
 	prevFigure = figure;
@@ -142,6 +150,8 @@ void TetrisFigure::Rotate()
 		coord = prevCoord;
 	}
 }
+
+// Движение фигуры влево/вправо
 void TetrisFigure::MoveHorizontally(Directions direction)
 {
 	prevFigure = figure;
@@ -155,6 +165,8 @@ void TetrisFigure::MoveHorizontally(Directions direction)
 	CheckBoundaries();
 	if (isIntersectionBlocks()) coord = prevCoord;
 }
+
+// Движение фигуры вниз
 bool TetrisFigure::MoveDown()
 {
 	prevFigure = figure;
@@ -174,6 +186,7 @@ bool TetrisFigure::MoveDown()
 	else return true;
 }
 
+// Проверка выхода за границы поля
 bool TetrisFigure::CheckBoundaries()
 {
 	bool returnStatus = false;
@@ -201,6 +214,7 @@ bool TetrisFigure::CheckBoundaries()
 	return returnStatus;
 }
 
+// Проверка наличия свободных ячеек в столбце
 bool TetrisFigure::isContainsUnitInColumne(size_t icol)
 {
 	size_t irow = 0;
@@ -212,6 +226,8 @@ bool TetrisFigure::isContainsUnitInColumne(size_t icol)
 	};
 	return !std::all_of(figure.begin(), figure.end(), lambd1);
 }
+
+// Проверка наличия свободных ячеек в строке
 bool TetrisFigure::isContainsUnitInRow(size_t irow)
 {
 	size_t counter = 0;
@@ -222,6 +238,8 @@ bool TetrisFigure::isContainsUnitInRow(size_t irow)
 	};
 	return !std::all_of(figure.begin(), figure.end(), lambd2);
 }
+
+// Проверка пересечения блоков фигуры с занятыми ячейками поля
 bool TetrisFigure::isIntersectionBlocks()
 {
 	size_t row = 0, col = 0;
@@ -239,6 +257,7 @@ bool TetrisFigure::isIntersectionBlocks()
 	return std::any_of(figure.begin(), figure.end(), lambd3);
 }
 
+// Заполнение поля блоками фигуры
 void TetrisFigure::FillFieldFigure()
 {
 	size_t row = 0, col = 0;
@@ -255,6 +274,7 @@ void TetrisFigure::FillFieldFigure()
 	std::for_each(figure.begin(), figure.end(), lambd4);
 }
 
+// Проверка конца игры
 bool TetrisFigure::CheckEndGame()
 {
 	if (coord.Y < HIDDEN_ROW_OF_FIELD)
@@ -267,6 +287,8 @@ bool TetrisFigure::CheckEndGame()
 	}
 	return false;
 }
+
+// Создание всех фигур тетриса
 std::vector<TetrisFigure> CreateFigures(TetrisManager& man)
 {
 	block_t fig1

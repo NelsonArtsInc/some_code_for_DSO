@@ -6,6 +6,7 @@
 
 namespace {
 
+// Парсинг строки мелодии в массив нот
 std::vector<Core::Sound::Melody::Note> parseMelody(const char* bytes)
 {
 	std::vector<Core::Sound::Melody::Note> result;
@@ -73,6 +74,7 @@ std::vector<Core::Sound::Melody::Note> parseMelody(const char* bytes)
 
 namespace Core::Sound {
 
+// Создание мелодии из строки
 std::shared_ptr<Melody> Melody::createMelody(const char* rawMelody, int rate, const std::weak_ptr<SoundManager>& soundManager)
 {
 	auto newMelody = std::make_shared<Melody>();
@@ -82,6 +84,7 @@ std::shared_ptr<Melody> Melody::createMelody(const char* rawMelody, int rate, co
 	return newMelody;
 }
 
+// Воспроизвести мелодию
 void Melody::play()
 {
 	if(auto manager = _weakManager.lock()) {
@@ -89,6 +92,7 @@ void Melody::play()
 	}
 }
 
+// Проверить, проигрывается ли мелодия
 bool Melody::isPlayed() const
 {
 	if(auto manager = _weakManager.lock()) {
@@ -97,6 +101,7 @@ bool Melody::isPlayed() const
 	return false;
 }
 
+// Остановить воспроизведение
 void Melody::stop()
 {
 	if(auto manager = _weakManager.lock()) {
@@ -104,16 +109,19 @@ void Melody::stop()
 	}
 }
 
+// Получить количество нот
 std::size_t Melody::countOfNotes() const
 {
 	return _notes.size();
 }
 
+// Получить ноту по индексу
 Melody::Note Melody::getNoteByIndex(int i) const
 {
 	return _notes.at(i);
 }
 
+// Получить частоту воспроизведения
 int Melody::getRate() const
 {
 	return _rate;

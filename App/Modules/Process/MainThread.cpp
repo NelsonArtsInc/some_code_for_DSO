@@ -12,32 +12,41 @@
 #include "Style.hpp"
 #include "Sound/SoundManager.hpp"
 
+// Текущий выбранный пункт меню
 static MainMenu currentItem = MainMenu::SNAKE;
+// Пункт меню, который будет выполнен
 static MainMenu execItem = MainMenu::NONE;
+// Объект для обработки ввода
 static Core::FA::InputFA inputFA;
+// Параметры звука кнопки
 static uint32_t buttonSoundFreq = 100000;
 static uint8_t buttonSoundVolume = 100;
 static uint32_t buttonSoundDurationMs = 100;
+// Менеджер звука и мелодии
 static std::shared_ptr<Core::Sound::SoundManager> _soundManager;
 static std::shared_ptr<Core::Sound::Melody> _melody1;
 static std::shared_ptr<Core::Sound::Melody> _melody2;
 static std::shared_ptr<Core::Sound::Melody> _intro;
 
+// Воспроизвести первую мелодию
 void playMelody1()
 {
 	_melody1->play();
 }
 
+// Воспроизвести вторую мелодию
 void playMelody2()
 {
 	_melody2->play();
 }
 
+// Воспроизвести звук нажатия кнопки
 void buttonSoundResponse()
 {
 	playSound(buttonSoundFreq, buttonSoundVolume, buttonSoundDurationMs);
 }
 
+// Обработчик левой кнопки
 void onLeftButton(int newState)
 {
 	if(newState == RELEASED) {
@@ -46,6 +55,7 @@ void onLeftButton(int newState)
 	inputFA->handleButton(Core::FA::LEFT_BUTTON, newState);
 }
 
+// Обработчик средней левой кнопки
 void onMidLeftButton(int newState)
 {
 	if(newState == RELEASED) {
@@ -54,6 +64,7 @@ void onMidLeftButton(int newState)
 	inputFA->handleButton(Core::FA::MID_LEFT_BUTTON, newState);
 }
 
+// Обработчик средней кнопки
 void onMidButton(int newState)
 {
 	if(newState == RELEASED) {
@@ -62,6 +73,7 @@ void onMidButton(int newState)
 	inputFA->handleButton(Core::FA::MID_BUTTON, newState);
 }
 
+// Обработчик средней правой кнопки
 void onMidRightButton(int newState)
 {
 	if(newState == RELEASED) {
@@ -70,6 +82,7 @@ void onMidRightButton(int newState)
 	inputFA->handleButton(Core::FA::MID_RIGHT_BUTTON, newState);
 }
 
+// Обработчик правой кнопки
 void onRightButton(int newState)
 {
 	if(newState == RELEASED) {
@@ -78,6 +91,7 @@ void onRightButton(int newState)
 	inputFA->handleButton(Core::FA::RIGHT_BUTTON, newState);
 }
 
+// Обработчик энкодера (колеса)
 void onWheel(int newDirection)
 {
 	static bool skip = false;
@@ -87,6 +101,7 @@ void onWheel(int newDirection)
 	skip = !skip;
 }
 
+// Инициализация звуковых эффектов и мелодий
 void initializeSound()
 {
 	const char * intro = "16#g1 16#d2 16#c2 16e2 8#d2 16#d2 16b1 16#c2 16#d2 8e2 16#d2 2#g1 16#g1";
@@ -99,6 +114,7 @@ void initializeSound()
 	_intro = _soundManager->createMelody(intro, 112);
 }
 
+// Инициализация главного меню и интерфейса
 void MainInit()
 {
 	LED_ON(true);
@@ -114,6 +130,7 @@ void MainInit()
 	delayMS(3000);
 	LED_ON(false);
 
+	// Настройка обработчиков кнопок для главного меню
 	Core::FA::InputState menuStates;
 	menuStates.setButtonHandler(Core::FA::LEFT_BUTTON, RELEASED,
 		[] {
@@ -141,18 +158,21 @@ void MainInit()
 	inputFA.push(menuStates);
 }
 
+// Отрисовка главного превью
 void printMainPreview()
 {
 	tft_fillScreen(BACKGROUND_COLOR);
 	tft_drawBitmap(0, 0, &previewBitmap[0], 320, 240, ILI9341_WHITE);
 }
 
+// Отрисовка превью для раздела "О программе"
 void printAboutPreview()
 {
 	tft_fillScreen(BACKGROUND_COLOR);
 	tft_drawBitmap(0, 0, &aboutBitmap[0], 320, 240, ILI9341_WHITE);
 }
 
+// Отрисовка интерфейса "О программе"
 void printAboutInterface()
 {
 	printAboutPreview();
@@ -174,6 +194,7 @@ void printAboutInterface()
 	tft_print("HOLD 1 MENU");
 }
 
+// Отрисовка интерфейса меню
 void printMenuInterface()
 {
 	tft_fillScreen(BACKGROUND_COLOR);
@@ -183,6 +204,7 @@ void printMenuInterface()
 	printMenuButtons();
 }
 
+// Отрисовка кнопок меню с учетом выбранного пункта
 void printMenuButtons()
 {
 	tft_setTextSize(3);
@@ -200,6 +222,7 @@ void printMenuButtons()
 	tft_print("ABOUT");
 }
 
+// Главный поток программы
 void MainThread()
 {
 	MainInit();
@@ -211,6 +234,7 @@ void MainThread()
 			 if(execItem == MainMenu::ABOUT) {
 				 bool leave = false;
 				Core::FA::InputState aboutStates;
+				// Обработчик выхода из раздела "О программе" по удержанию левой кнопки
 				aboutStates.setButtonHandler(Core::FA::LEFT_BUTTON, HOLDED,
 					[&leave] {
 						leave = true;
@@ -227,8 +251,10 @@ void MainThread()
 				}
 				inputFA.pop();
 			 } else if(execItem == MainMenu::TETRIS) {
+				 // Запуск игры Tetris
 				 TetrisTask(&inputFA);
 			 } else if(execItem == MainMenu::SNAKE) {
+				 // Запуск игры Snake
 				 SnakeTask(&inputFA);
 			 }
 
