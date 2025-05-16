@@ -1,0 +1,3 @@
+C:/Users/usermeme/Downloads/Telegram Desktop/GameConsole-NewEdition-Champ/GameConsole-NewEdition-Champ/Debug/CMakeFiles/GameConsole-NewEdition-Champ.dir
+C:/Users/usermeme/Downloads/Telegram Desktop/GameConsole-NewEdition-Champ/GameConsole-NewEdition-Champ/Debug/CMakeFiles/edit_cache.dir
+C:/Users/usermeme/Downloads/Telegram Desktop/GameConsole-NewEdition-Champ/GameConsole-NewEdition-Champ/Debug/CMakeFiles/rebuild_cache.dir
